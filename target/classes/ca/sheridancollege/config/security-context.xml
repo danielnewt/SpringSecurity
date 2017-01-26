@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	
+	<security:authentication-manager>
+		<security:authentication-provider
+			user-service-ref="myUserDetailsService">
+			
+		<security:password-encoder ref="encoder"></security:password-encoder>
+		</security:authentication-provider>
+	</security:authentication-manager>
+	<security:http use-expressions="true">
+		<security:form-login authentication-failure-url='/login?error'
+			login-page="/login" login-processing-url="/j_spring_security_check"
+			default-target-url="/" password-parameter="j_password"
+			username-parameter="j_username" />
+		<security:intercept-url access="isAuthenticated()" pattern="/debug/**" />
+		<security:intercept-url access="isAuthenticated()" pattern="/logout" />
+		<security:intercept-url access="isAuthenticated()" pattern="/game/**" />
+		<security:intercept-url access="permitAll" pattern="/resources/**" />
+		<security:intercept-url access="permitAll" pattern="/" />
+		<security:intercept-url access="permitAll" pattern="/home" />
+		<security:intercept-url access="isAnonymous()" pattern="/login" />
+		<security:intercept-url access="isAnonymous()" pattern="/register" />
+		<security:intercept-url access="permitAll" pattern="/saveuser" />
+		
+		<security:intercept-url pattern="/**" access="denyAll" />
+
+	</security:http>
+	<bean id="encoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+	</bean>
+	<bean id="myUserDetailsService"
+		class="ca.sheridancollege.beans.MyUserDetailsService">
+	</bean>
+</beans>
